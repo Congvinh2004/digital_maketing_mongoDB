@@ -4,7 +4,9 @@
   "description": "backend-digital_maketing",
   "main": "server.js",
   "dependencies": {
+    "axios": "^1.7.7",
     "bytes": "^3.1.2",
+    "cloudinary": "^2.5.1",
     "content-type": "^1.0.5",
     "depd": "^2.0.0",
     "destroy": "^1.2.0",

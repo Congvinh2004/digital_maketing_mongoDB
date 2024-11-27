@@ -1,26 +1,20 @@
-//userService.js
-
-const mongoose = require('mongoose');
+// //userService.js
+const axios = require('axios');
 
 const userModel = require('../models/userModel');
-const ShopOrder = require('../models/shopOrderModel');
 
-const uri = 'mongodb://localhost:27017/admin';
+const SQL_API_URL_USER = 'http://localhost:8080/api/get-all-user'
 
-// connect to DB
-mongoose.connect(uri, {})
-    .then(() => {
-        console.log('Connected to MongoDB successfully');
-    })
-    .catch(err => {
-        console.error('Connected to MongoDB error:', err);
-    });
+let getAllRecordUserToSQL = () => {
+    return axios.get(SQL_API_URL_USER)
+}
 
-let getUsers = () => {
+
+let getAllInforUsers = () => {
     return new Promise(async (resolve, reject) => {
         try {
-            console.log('Fetching all users from MongoDB');
-            let users = await userModel.find().populate("orders"); // Populate orders collection
+            console.log('Fetching all infor users from MongoDB');
+            let users = await userModel.find() // Populate orders collection
             resolve({
                 errCode: 0,
                 data: users
@@ -30,41 +24,44 @@ let getUsers = () => {
         }
     });
 };
-let validateEmail = (email) => {
-    var re = /\S+@\S+\.\S+/;
-    return re.test(email);
-}
 
-
-let createNewUser = (userData) => {
+let createNewInforUser = () => {
     return new Promise(async (resolve, reject) => {
-        let { name, email, password, address, phoneNumber, role } = userData
         try {
-            if (validateEmail(email) === false || !name || !email || !password || !address || !phoneNumber || !role) {
-                resolve({
-                    errCode: 1,
-                    message: 'User created error'
-                })
-                return;
-            }
-            let foundUser = await userModel.findOne({
-                email: email
-            })
-            if (!foundUser) {
-                await userModel.create(userData);
+            let userInforData = await getAllRecordUserToSQL(); // getAllRecordUserToSQL() trả về một mảng thông tin người dùng
+            if (userInforData) {
+                console.log('check userInforData ', userInforData.data);
+
+                // Duyệt qua thông tin từng người trong mảng
+                let count = 0;
+                for (let userData of userInforData.data) {
+                    let foundUser = await userModel.findOne({ userId: userData.userID });
+
+                    if (!foundUser) {
+                        // Nếu userId chưa tồn tại, tạo người dùng mới
+                        await userModel.create({
+                            userId: userData.userID,
+                            name: userData.name,
+                            image: userData.avatar,
+                        });
+                        console.log(`User ${userData.userID} created successfully.`);
+                        count++;
+                    } else {
+                        console.log(`User ${userData.userID} already exists.`);
+                    }
+                }
+
                 resolve({
                     errCode: 0,
-                    message: 'User created successfully',
+                    message: count + ' users processed successfully',
                 });
 
             }
             else {
                 resolve({
                     errCode: 1,
-                    message: 'User created error',
-                    foundUser: foundUser
-                })
-                return;
+                    message: 'An error occurred while get data from SQL.',
+                });
             }
         } catch (e) {
             reject(e);
@@ -72,27 +69,29 @@ let createNewUser = (userData) => {
     });
 };
 
-let deleteUser = async (userId) => {
+
+let deleteInforUser = (userId) => {
     return new Promise(async (resolve, reject) => {
         try {
-            let foundUser = await userModel.findOne({ _id: userId });
+            console.log('check userId: ', userId)
+            let foundUser = await userModel.findOne({ userId: userId });
+            console.log('check foundUser: ', foundUser)
             if (foundUser) {
-                await userModel.deleteOne({ _id: userId });
+                await userModel.deleteOne({ userId: userId });
                 resolve({
                     errCode: 0,
-                    message: 'User deleted successfully',
+                    message: 'User infor deleted successfully',
                     // Trả về một đối tượng đơn giản, không có vòng lặp
                     deletedUser: {
-                        _id: foundUser._id,
+                        userId: foundUser.userId,
                         name: foundUser.name,
-                        email: foundUser.email,
-                        // Bạn có thể thêm các thuộc tính khác mà bạn muốn trả về
+                        image: foundUser.image,
                     }
                 });
             } else {
                 resolve({
                     errCode: 1,
-                    message: 'User does not exist',
+                    message: 'User infor does not exist',
                 });
             }
         } catch (e) {
@@ -103,7 +102,8 @@ let deleteUser = async (userId) => {
 
 
 module.exports = {
-    getUsers,
-    createNewUser,
-    deleteUser
+    getAllInforUsers,
+    createNewInforUser,
+    deleteInforUser,
+    getAllRecordUserToSQL
 }
