@@ -12,12 +12,12 @@ let createInforProduct = () => {
 
         try {
             let detailInforProductData = await getAllRecordProductToSQL(); // getAllRecordProductToSQL() trả về một mảng thông tin sản phẩm
-            if (detailInforProductData) {
-
-                console.log('check userInforData ', detailInforProductData.data);
+            if (detailInforProductData && detailInforProductData.data && detailInforProductData.data.data) {
+                let inputProductData = detailInforProductData.data.data
+                console.log('check input inputProductData: ', inputProductData);
 
                 let count = 0;
-                for (let productData of detailInforProductData.data) {
+                for (let productData of inputProductData) {
                     let foundProduct = await productModel.findOne({ productId: productData.productID });
 
                     if (!foundProduct) {

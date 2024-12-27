@@ -1,7 +1,7 @@
 // server.js
 const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 const uri = 'mongodb://localhost:27017/admin';
 const cloudinary = require('cloudinary').v2;
 

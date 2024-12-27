@@ -9,16 +9,14 @@ class User {
     #username;
     #password;
     #phoneNumber;
-    #note;
     #avatar;
-    constructor(userID, name, address, username, password, phoneNumber, note, avatar) {
+    constructor(userID, name, address, username, password, phoneNumber, avatar) {
         this.userID = userID; // ID người dùng
         this.name = name; // Tên người dùng
         this.address = address; // địa chỉ
         this.username = username; // tên đăng nhập
         this.password = password; // password
         this.phoneNumber = phoneNumber; //sdt
-        this.note = note; // thêm ghi chú
         this.avatar = avatar;  // avatar
     }
     getName() {
@@ -36,7 +34,7 @@ class User {
 
     getInfo() {
         return `
-        ID: ${this.#userID}, Name: ${this.#name}, Address: ${this.#address}, Username: ${this.#username}, Password: ${this.#password},Phone number: ${this.#phoneNumber}, Note: ${this.#note}, Avatar: ${this.#avatar}`;
+        ID: ${this.#userID}, Name: ${this.#name}, Address: ${this.#address}, Username: ${this.#username}, Password: ${this.#password},Phone number: ${this.#phoneNumber}, Avatar: ${this.#avatar}`;
     }
 }
 
@@ -98,53 +96,17 @@ class RDatabase {
 // Sử dụng cơ sở dữ liệu hướng đối tượng
 const db = new RDatabase();
 
-// Thêm người dùng
-// db.addUser(new User(
-//     1,
-//     "Trí Đặng",
-//     "123 An Dương Vương",
-//     "tri123",
-//     "password123",
-//     "1234567890",
-//     "Customer note",
-//     "https://media-cdn-v2.laodong.vn/storage/newsportal/2024/7/31/1374109/Quang-Hung-01.jpg"
-// ));
-// db.addUser(new User(
-//     2,
-//     "Công Vinh",
-//     "456 An Dương Vương",
-//     "vinh123",
-//     "password456",
-//     "9876543210",
-//     "Another customer note",
-//     "https://danviet.mediacdn.vn/296231569849192448/2024/6/13/son-tung-mtp-17182382517241228747767.jpg"));
-
-// // Thêm sản phẩm
-// db.addProduct(new Product(1,
-//     "Bắp cải",
-//     "bapcai.jpg",
-//     "Bắp cải nồi",
-//     15000,
-//     10,
-//     1));
-// db.addProduct(new Product(2,
-//     "Thịt bò",
-//     "thitbo.jpg",
-//     "Ba chỉ bò",
-//     240000,
-//     5,
-//     2));
 
 
 async function fetchAndSaveData() {
     try {
         // Gọi API lấy danh sách người dùng
-        const userResponse = await axios.get('http://localhost:8080/api/get-all-user');
-        const productResponse = await axios.get('http://localhost:8080/api/get-all-product');
+        const userResponse = await axios.get('http://localhost:8080/api/get-all-user?id=ALL');
+        const productResponse = await axios.get('http://localhost:8080/api/get-all-product?id=ALL');
 
         // Xử lý dữ liệu người dùng
 
-        userResponse.data.forEach(userData => {
+        userResponse.data.data.forEach(userData => {
             const user = new User(
                 userData.userID,
                 userData.name,
@@ -152,7 +114,6 @@ async function fetchAndSaveData() {
                 userData.username,
                 userData.password,
                 userData.phoneNumber,
-                userData.note,
                 userData.avatar,
             );
             db.addUser(user);
@@ -161,7 +122,7 @@ async function fetchAndSaveData() {
 
 
         // Xử lý dữ liệu sản phẩm
-        productResponse.data.forEach(productData => {
+        productResponse.data.data.forEach(productData => {
             const product = new Product(
                 productData.productID,
                 productData.description,

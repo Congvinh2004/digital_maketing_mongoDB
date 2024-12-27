@@ -29,12 +29,13 @@ let createNewInforUser = () => {
     return new Promise(async (resolve, reject) => {
         try {
             let userInforData = await getAllRecordUserToSQL(); // getAllRecordUserToSQL() trả về một mảng thông tin người dùng
-            if (userInforData) {
-                console.log('check userInforData ', userInforData.data);
+            if (userInforData && userInforData.data) {
+                let inputUserData = userInforData.data.data
+                console.log('check userInforData: ', inputUserData);
 
                 // Duyệt qua thông tin từng người trong mảng
                 let count = 0;
-                for (let userData of userInforData.data) {
+                for (let userData of inputUserData) {
                     let foundUser = await userModel.findOne({ userId: userData.userID });
 
                     if (!foundUser) {
