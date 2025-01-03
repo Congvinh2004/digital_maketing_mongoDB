@@ -126,6 +126,15 @@ Nếu chưa cài, bạn có thể tải Git từ git-scm.com và cài đặt.
     Connected to MongoDB successfully.
     Backend nodejs is listening on port 3001
   là đã chạy thành công.
+- Kiểm tra kết quả truy vấn metadata:
+  - Mở MongoDB và check data lưu trữ.
+ 
+- Kiểm tra kết quả lưu trữ Multimedia:
+- truy cập giao diện quản lý của Cloudinary để kiểm tra thư mục và ảnh:
+  - Đăng nhập vào Cloudinary.
+  - Vào tab Media Explorer.
+  - Xem thư mục Image_Project và kiểm tra các ảnh đã được upload.
+  
 
 ## **8. Các vấn đề thường gặp**
 - Danh sách các lỗi phổ biến và cách khắc phục:
@@ -136,7 +145,9 @@ Nếu chưa cài, bạn có thể tải Git từ git-scm.com và cài đặt.
       ```bash
       npm install
       ```
-
+  - **Lỗi:** Không upload được ảnh lên Cloudinary.
+      - **Cách xử lý:** Kiểm tra xem link hình ảnh đã đúng chưa, có thừa kí tự khoảng trắng hay kí tự đặt biệt nào không:
+       
 ## **9. Tài liệu tham khảo**
 
 - Tài liệu hướng dẫn sử dụng SSMS: `https://learn.microsoft.com/en-us/sql/ssms/download-sql-server-management-studio-ssms?view=sql-server-ver16`
